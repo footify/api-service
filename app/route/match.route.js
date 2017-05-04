@@ -5,7 +5,7 @@ const dataApi = require('@footify/data-api');
 const httpHelper = require('@footify/http-helper');
 
 function registerRoute(router) {
-    router.post('/matchs', passport.authenticate('bearer', { session : false }), httpHelper.generateRoute(createMatch));
+    router.post('/matches', passport.authenticate('bearer', { session : false }), httpHelper.generateRoute(createMatch));
 }
 
 function createMatch(req, res, next) {
