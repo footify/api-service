@@ -98,7 +98,7 @@ function denyInvitation(req, res, next) {
             if (!user) {
                 throw boom.notFound('User not found');
             }
-            return dataApi.friendListRepository.denyFriend(req.user._id, user._id)
+            return dataApi.friendListRepository.denyInvitation(req.user._id, user._id)
                 .then(() => {
                     httpHelper.sendReply(res, 201, {});
                 });
