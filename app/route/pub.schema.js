@@ -5,6 +5,7 @@ const getPubByIdOutputSchema = Joi.object().keys({
     id: Joi.any().required(),
     google_id: Joi.string(),
     name: Joi.string().required(),
+    picture_url: Joi.string().required(),
     street_number: Joi.string().required(),
     street_name: Joi.string().required(),
     zip_code: Joi.string().required(),
