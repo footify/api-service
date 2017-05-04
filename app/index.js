@@ -7,6 +7,7 @@ const bearerAuth = require('./auth/bearer');
 const httpHelper = require('@footify/http-helper');
 
 const userRoute = require('./route/user.route');
+const babyFootRoute = require('./route/babyfoot.route');
 
 function app() {
     logger.info('Initializing service ...');
@@ -23,6 +24,7 @@ function app() {
     router.use(httpHelper.logger('api'));
 
     userRoute.registerRoute(router);
+    babyFootRoute.registerRoute(router);
 
     app.use('/v1/', router);
 
