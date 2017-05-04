@@ -38,29 +38,25 @@ function getUserInformation(req, res, next) {
 }
 
 function getUserFriend(req, res, next) {
-    return dataApi.friendRepository.getMyFriends(req.user._id)
+    return dataApi.friendListRepository.getFriendList(req.user._id)
         .then((friends) => {
-            let user;
-            let output = {
-                friends: [],
+            let friendList = {
+                waitingAnswer: [],
                 waitingApproval: [],
-                waitingAnswer: []
+                accepted: []
             };
 
-            for (let friend of friends.friends) {
-                user = friend.user._id.toString() === req.user._id.toString() ? friend.owner : friend.user;
-                output.friends.push(httpHelper.utils.toSnakeCase(user.toObject()));
+            for (let f of friends.waitingAnswer) {
+                friendList.waitingAnswer.push(httpHelper.utils.toSnakeCase(f.toObject()));
             }
-            for (let friend of friends.waiting_approval) {
-                user = friend.user._id.toString() === req.user._id.toString() ? friend.owner : friend.user;
-                output.waitingApproval.push(httpHelper.utils.toSnakeCase(user.toObject()));
+            for (let f of friends.waitingApproval) {
+                friendList.waitingApproval.push(httpHelper.utils.toSnakeCase(f.toObject()));
             }
-            for (let friend of friends.waiting_answer) {
-                user = friend.user._id.toString() === req.user._id.toString() ? friend.owner : friend.user;
-                output.waitingAnswer.push(httpHelper.utils.toSnakeCase(user.toObject()));
+            for (let f of friends.accepted) {
+                friendList.accepted.push(httpHelper.utils.toSnakeCase(f.toObject()));
             }
 
-            httpHelper.sendReply(res, 200, output, schemas.userFriendList);
+            httpHelper.sendReply(res, 200, friendList, schemas.userFriendList);
         }).catch((e) => {
             httpHelper.handleError(res, e);
         });
@@ -72,11 +68,13 @@ function sendInvitation(req, res, next) {
             if (!user) {
                 throw boom.notFound('User not found');
             }
-            return dataApi.friendRepository.sendInvitation(req.user._id, user._id)
+            return dataApi.friendListRepository.sendInvitation(req.user._id, user._id)
                 .then((result) => {
                     httpHelper.sendReply(res, 201, {});
                 });
-        })
+        }).catch((e) => {
+            httpHelper.handleError(res, e);
+        });
 }
 
 function acceptInvitation(req, res, next) {
@@ -85,10 +83,12 @@ function acceptInvitation(req, res, next) {
             if (!user) {
                 throw boom.notFound('User not found');
             }
-            return dataApi.friendRepository.acceptInvitation(req.user._id, user._id)
+            return dataApi.friendListRepository.acceptInvitation(req.user._id, user._id)
                 .then(() => {
                     httpHelper.sendReply(res, 201, {});
                 })
+        }).catch((e) => {
+            httpHelper.handleError(res, e);
         });
 }
 
@@ -98,10 +98,12 @@ function denyInvitation(req, res, next) {
             if (!user) {
                 throw boom.notFound('User not found');
             }
-            return dataApi.friendRepository.denyFriend(req.user._id, user._id)
+            return dataApi.friendListRepository.denyFriend(req.user._id, user._id)
                 .then(() => {
                     httpHelper.sendReply(res, 201, {});
                 });
+        }).catch((e) => {
+            httpHelper.handleError(res, e);
         });
 }
 

@@ -18,7 +18,7 @@ const friendSchema = Joi.object().keys({
 });
 
 const userFriendList = Joi.object().keys({
-    friends: Joi.array().items(friendSchema),
+    accepted: Joi.array().items(friendSchema),
     waiting_approval: Joi.array().items(friendSchema),
     waiting_answer: Joi.array().items(friendSchema)
 });
