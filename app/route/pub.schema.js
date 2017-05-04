@@ -1,4 +1,5 @@
 const Joi = require('joi');
+const babyfootSchemas = require('./babyfoot.schema');
 
 const getPubByIdOutputSchema = Joi.object().keys({
     id: Joi.any().required(),
@@ -13,4 +14,7 @@ const getPubByIdOutputSchema = Joi.object().keys({
     close_at: Joi.string()
 });
 
+const getBabyfootsByPubOutputSchema = Joi.array().items(babyfootSchemas.babyfootOuputSchema);
+
 module.exports.getPubByIdOutputSchema = getPubByIdOutputSchema;
+module.exports.getBabyfootsByPubOutputSchema = getBabyfootsByPubOutputSchema;

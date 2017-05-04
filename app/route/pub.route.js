@@ -6,6 +6,7 @@ const httpHelper = require('@footify/http-helper');
 
 function registerRoute(router) {
     router.get('/pubs/:id', passport.authenticate('basic', { session : false }), httpHelper.generateRoute(getPubInformation));
+    router.get('/pubs/:id/babyfoots', passport.authenticate('basic', { session : false }), httpHelper.generateRoute(getPubBabyfoots));
 }
 
 function getPubInformation(req, res, next) {
@@ -23,8 +24,14 @@ function getPubInformation(req, res, next) {
 function getPubBabyfoots(req, res, next) {
     return dataApi.babyfootRepository.getByPubId(req.params.id)
         .then((babyfoots) => {
-
-        })
+            let output = [];
+            for (let babyfoot of babyfoots) {
+                output.push(babyfoot.toObject());
+            }
+            httpHelper.sendReply(res, 200, output, schemas.getBabyfootsByPubOutputSchema);
+        }).catch((e) => {
+            httpHelper.handleError(res, e);
+        });
 }
 
 module.exports.registerRoute = registerRoute;
