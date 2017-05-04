@@ -40,6 +40,7 @@ function getUserInformation(req, res, next) {
 function getUserFriend(req, res, next) {
     return dataApi.friendRepository.getMyFriends(req.user._id)
         .then((friends) => {
+            let user;
             let output = {
                 friends: [],
                 waitingApproval: [],
@@ -47,13 +48,16 @@ function getUserFriend(req, res, next) {
             };
 
             for (let friend of friends.friends) {
-                output.friends.push(httpHelper.utils.toSnakeCase(friend.user.toObject()));
+                user = friend.user._id.toString() === req.user._id.toString() ? friend.owner : friend.user;
+                output.friends.push(httpHelper.utils.toSnakeCase(user.toObject()));
             }
             for (let friend of friends.waiting_approval) {
-                output.waitingApproval.push(httpHelper.utils.toSnakeCase(friend.user.toObject()));
+                user = friend.user._id.toString() === req.user._id.toString() ? friend.owner : friend.user;
+                output.waitingApproval.push(httpHelper.utils.toSnakeCase(user.toObject()));
             }
             for (let friend of friends.waiting_answer) {
-                output.waitingAnswer.push(httpHelper.utils.toSnakeCase(friend.user.toObject()));
+                user = friend.user._id.toString() === req.user._id.toString() ? friend.owner : friend.user;
+                output.waitingAnswer.push(httpHelper.utils.toSnakeCase(user.toObject()));
             }
 
             httpHelper.sendReply(res, 200, output, schemas.userFriendList);
