@@ -20,4 +20,11 @@ function getPubInformation(req, res, next) {
         });
 }
 
+function getPubBabyfoots(req, res, next) {
+    return dataApi.babyfootRepository.getByPubId(req.params.id)
+        .then((babyfoots) => {
+
+        })
+}
+
 module.exports.registerRoute = registerRoute;

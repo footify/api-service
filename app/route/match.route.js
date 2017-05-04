@@ -52,7 +52,7 @@ function createMatch(req, res, next) {
                                                                 if (!game) {
                                                                     throw new Error('Unable to create game');
                                                                 }
-                                                                httpHelper.sendReply(res, 201, game); // TODO: Test & schema
+                                                                httpHelper.sendReply(res, 201, {});
                                                             });
                                                         });
                                                 });
@@ -60,6 +60,8 @@ function createMatch(req, res, next) {
                                 });
                         });
                 });
+        }).catch((e) => {
+            httpHelper.handleError(res, e);
         });
 }
 
