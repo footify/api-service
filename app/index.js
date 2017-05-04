@@ -3,7 +3,10 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const passport = require('passport');
 const basicAuth = require('./auth/basic');
+const bearerAuth = require('./auth/bearer');
 const httpHelper = require('@footify/http-helper');
+
+const userRoute = require('./route/user.route');
 
 function app() {
     logger.info('Initializing service ...');
@@ -11,14 +14,15 @@ function app() {
     let app = express();
     app.use(bodyParser.json());
 
-    //app.use(passport.initialize());
+    app.use(passport.initialize());
+    basicAuth.init();
+    bearerAuth.init();
 
     let router = express.Router();
 
-    //basicAuth.init();
     router.use(httpHelper.logger('api'));
 
-    //router.use(passport.authenticate('basic', { session: false }));
+    userRoute.registerRoute(router);
 
     app.use('/v1/', router);
 

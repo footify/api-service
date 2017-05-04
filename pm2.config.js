@@ -7,7 +7,7 @@ module.exports = {
         {
             name      : "footify-api-service",
             script    : "./index.js",
-            watch: ['app', 'node_modules'],
+            watch: ['app'],
             ignore_watch: ['data', 'log'],
             watch_options: {
                 usePolling: true,

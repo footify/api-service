@@ -4,8 +4,10 @@ const BearerStrategy = require('passport-http-bearer');
 
 function init() {
     passport.use(new BearerStrategy((token, done) => {
+        console.log(token);
         return dataApi.accessTokenRepository.getByToken(token)
             .then((token) => {
+                console.log(token);
                 if (!token) {
                     done(null, false);
                 } else {
