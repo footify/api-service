@@ -8,6 +8,7 @@ const httpHelper = require('@footify/http-helper');
 function registerRoute(router) {
     router.get('/pubs/:id', passport.authenticate('basic', { session : false }), httpHelper.generateRoute(getPubInformation));
     router.get('/pubs/:id/babyfoots', passport.authenticate('basic', { session : false }), httpHelper.generateRoute(getPubBabyfoots));
+    router.get('/pubs/:id/ranking', passport.authenticate('basic', { session : false }), httpHelper.generateRoute(getPubRanking));
     router.get('/pubs/:id/feed', passport.authenticate('basic', { session : false }), httpHelper.generateRoute(getPubFeed));
 }
 
@@ -33,6 +34,27 @@ function getPubBabyfoots(req, res, next) {
             httpHelper.sendReply(res, 200, output, schemas.getBabyfootsByPubOutputSchema);
         }).catch((e) => {
             httpHelper.handleError(res, e);
+        });
+}
+
+function getPubRanking(req, res, next) {
+    return dataApi.leagueRepository.getByPubId(req.params.id)
+        .then((league) => {
+            if (!league) {
+                throw new Error('Could not find league');
+            }
+            return dataApi.leagueRankingRepository.getRankingsByLeague(league._id)
+                .then((rankings) => {
+                    let output = [];
+
+                    for (let ranking of rankings) {
+                        ranking = ranking.toObject();
+                        let team = ranking.team;
+                        ranking.team = { id: team._id, players: [httpHelper.utils.toSnakeCase(team.player1), httpHelper.utils.toSnakeCase(team.player2)]};
+                        output.push(ranking);
+                    }
+                    httpHelper.sendReply(res, 200, output, schemas.pubRankingOutputSchema);
+                });
         });
 }
 

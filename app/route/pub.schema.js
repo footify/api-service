@@ -1,4 +1,5 @@
 const Joi = require('joi');
+const matchSchema = require('./match.schema');
 const babyfootSchemas = require('./babyfoot.schema');
 
 const getPubByIdOutputSchema = Joi.object().keys({
@@ -15,7 +16,17 @@ const getPubByIdOutputSchema = Joi.object().keys({
     close_at: Joi.string()
 });
 
+const ranckingSchema = Joi.object().keys({
+    id: Joi.any().required(),
+    league: Joi.any().required(),
+    team: matchSchema.teamSchema,
+    point: Joi.number().required()
+});
+
+const pubRankingOutputSchema = Joi.array().items(ranckingSchema);
+
 const getBabyfootsByPubOutputSchema = Joi.array().items(babyfootSchemas.babyfootOuputSchema);
 
 module.exports.getPubByIdOutputSchema = getPubByIdOutputSchema;
 module.exports.getBabyfootsByPubOutputSchema = getBabyfootsByPubOutputSchema;
+module.exports.pubRankingOutputSchema = pubRankingOutputSchema;
