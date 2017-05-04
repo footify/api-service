@@ -8,6 +8,7 @@ const httpHelper = require('@footify/http-helper');
 
 const userRoute = require('./route/user.route');
 const babyFootRoute = require('./route/babyfoot.route');
+const pubRoute = require('./route/pub.route');
 
 function app() {
     logger.info('Initializing service ...');
@@ -25,6 +26,7 @@ function app() {
 
     userRoute.registerRoute(router);
     babyFootRoute.registerRoute(router);
+    pubRoute.registerRoute(router);
 
     app.use('/v1/', router);
 

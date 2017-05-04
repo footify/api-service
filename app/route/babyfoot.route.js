@@ -5,13 +5,12 @@ const dataApi = require('@footify/data-api');
 const httpHelper = require('@footify/http-helper');
 
 function registerRoute(router) {
-    router.get('/babyfoot/:id', passport.authenticate('basic', { session : false }), httpHelper.generateRoute(getBabyfootInformation));
+    router.get('/babyfoots/:id', passport.authenticate('basic', { session : false }), httpHelper.generateRoute(getBabyfootInformation));
 }
 
 function getBabyfootInformation(req, res, next) {
     return dataApi.babyfootRepository.getById(req.params.id)
         .then((babyfoot) => {
-            console.log(babyfoot);
             if (!babyfoot) {
                 throw boom.notFound('Babyfoot not found');
             }
