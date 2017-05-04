@@ -52,7 +52,27 @@ function createMatch(req, res, next) {
                                                                 if (!game) {
                                                                     throw new Error('Unable to create game');
                                                                 }
-                                                                httpHelper.sendReply(res, 201, {});
+                                                                return dataApi.leagueRepository.getByPubId(baby.pub)
+                                                                    .then((league) => {
+                                                                        if (!league) {
+                                                                            throw new Error('Unable to get league');
+                                                                        }
+                                                                        return getLeagueRanking(league, blueTeam)
+                                                                            .then((blueTeamRanking) => {
+                                                                                return getLeagueRanking(league, redTeam)
+                                                                                    .then((redTeamRanking) => {
+                                                                                        return dataApi.leagueRankingRepository.addPoint(blueTeam._id,
+                                                                                            league._id, (input.blueScore > input.redScore ? 3 : 1))
+                                                                                            .then(() => {
+                                                                                                return dataApi.leagueRankingRepository.addPoint(redTeam._id,
+                                                                                                    league._id, (input.redScore > input.blueScore ? 3 : 1))
+                                                                                                    .then(() => {
+                                                                                                        httpHelper.sendReply(res, 201, {});
+                                                                                                    });
+                                                                                            })
+                                                                                    });
+                                                                            });
+                                                                    });
                                                             });
                                                         });
                                                 });
@@ -80,6 +100,28 @@ function getTeam(user1, user2) {
                             reject(new Error('Unable to create team'))
                         }
                         resolve(team);
+                    });
+                }
+            });
+    });
+}
+
+function getLeagueRanking(league, team) {
+    return new Promise((resolve, reject) => {
+        return dataApi.leagueRankingRepository.getByTeamLeague(league._id, team._id)
+            .then((leagueRanking) => {
+                if (leagueRanking) {
+                    resolve(leagueRanking);
+                } else {
+                    return dataApi.leagueRankingRepository.create({
+                        league: league._id,
+                        team: team._id,
+                        point: 0
+                    }).then((leagueRanking) => {
+                        if (!leagueRanking) {
+                            reject(new Error('Unable to create league ranking'));
+                        }
+                        resolve(leagueRanking);
                     });
                 }
             });
